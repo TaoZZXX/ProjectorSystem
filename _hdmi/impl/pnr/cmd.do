@@ -1,0 +1,18 @@
+-d C:\Users\6800\Downloads\TangNano-20K-example-main\hdmi\impl\gwsynthesis\hdmi.vg
+-p GW2AR-18C-QFN88-8
+-pn GW2AR-LV18QN88C8/I7
+-cst C:\Users\6800\Downloads\TangNano-20K-example-main\hdmi\src\hdmi.cst
+-cfg C:\Users\6800\Downloads\TangNano-20K-example-main\hdmi\impl\pnr\device.cfg
+-sdc C:\Users\6800\Downloads\TangNano-20K-example-main\hdmi\src\nano_20k_video.sdc
+-bit
+-tr
+-ph
+-timing
+-cst_error
+-convert_sdp32_36_to_sdp16_18
+-place_option 0
+-route_option 0
+-clock_route_order 0
+-correct_hold 1
+-route_maxfan 23
+-global_freq 100.000

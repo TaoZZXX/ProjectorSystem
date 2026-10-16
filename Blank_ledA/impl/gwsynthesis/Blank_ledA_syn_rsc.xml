@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="led" Register="26" Alu="23" Lut="9" T_Register="26(26)" T_Alu="23(23)" T_Lut="9(9)"/>

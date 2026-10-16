@@ -1,0 +1,54 @@
+[
+ {
+  "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+  "InstLine" : 1,
+  "InstName" : "hdmi_top",
+  "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+  "ModuleLine" : 1,
+  "ModuleName" : "hdmi_top",
+  "SubInsts" : [
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 25,
+    "InstName" : "u_pll",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/TMDS_rPLL.v",
+    "ModuleLine" : 9,
+    "ModuleName" : "TMDS_rPLL"
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 45,
+    "InstName" : "u_video_timing_720p60",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/video_timing_720p30.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "video_timing_720p60"
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 75,
+    "InstName" : "u_dvi_tx_top",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/dvi_tx.v",
+    "ModuleLine" : 1072,
+    "ModuleName" : "DVI_TX_Top",
+    "SubInsts" : [
+     {
+      "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/dvi_tx.v",
+      "InstLine" : 1103,
+      "InstName" : "rgb2dvi_inst",
+      "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/dvi_tx.v",
+      "ModuleLine" : 10,
+      "ModuleName" : "~rgb2dvi.DVI_TX_Top"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/testpattern.v",
+  "InstLine" : 20,
+  "InstName" : "testpattern",
+  "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/testpattern.v",
+  "ModuleLine" : 20,
+  "ModuleName" : "testpattern"
+ }
+]

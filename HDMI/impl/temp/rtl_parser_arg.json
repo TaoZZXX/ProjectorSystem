@@ -1,0 +1,41 @@
+{
+ "Device" : "GW2AR-18C",
+ "Files" : [
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/TMDS_rPLL_371.25.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/dvi_tx.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/rPLL_108MHz.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/sdram_controller_hs/sdram_controller_hs.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/testpattern.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/video_timing_720p30.v",
+   "Type" : "verilog"
+  }
+ ],
+ "IncludePath" : [
+
+ ],
+ "LoopLimit" : 2000,
+ "ResultFile" : "G:/ccsugp/TangNano20k/HDMI/impl/temp/rtl_parser.result",
+ "Top" : "hdmi_top",
+ "VerilogStd" : "verilog_2001",
+ "VhdlStd" : "vhdl_93"
+}
