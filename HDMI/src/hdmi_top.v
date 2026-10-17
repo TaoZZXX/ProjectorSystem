@@ -1,5 +1,6 @@
 module hdmi_top (
     input  wire clk,
+    input  wire key_s1,
     output wire dvi_txc_p,
     output wire dvi_txc_n,
     output wire dvi_tx0_p,
@@ -18,7 +19,8 @@ module hdmi_top (
     output wire [10:0] O_sdram_addr,
     output wire [1:0]  O_sdram_ba,
     inout  wire [31:0] IO_sdram_dq,
-    output reg io_voltage_led
+    output reg io_voltage_led0,
+    output reg io_voltage_led1
 );
 
 wire clk_serial;
@@ -111,27 +113,23 @@ rPLL_108MHz u_rPLL_108MHz(
     .clkin(clk)
 );
 
-wire sdrc_cmd_en;
-wire [2:0] sdrc_cmd;
+reg sdrc_cmd_en;
+reg [2:0] sdrc_cmd;
 wire sdrc_precharge_ctrl;
 wire sdram_power_down;
 wire sdram_selfrefresh;
-wire [20:0] sdrc_addr;
+reg [20:0] sdrc_addr;
 wire [3:0] sdrc_dqm;
-wire [31:0] sdrc_data;
+reg [31:0] sdrc_data;
 wire [7:0] sdrc_data_len;
-wire [31:0] O_sdrc_data;     
+wire [31:0] O_sdrc_data;
 wire O_sdrc_init_done;
-wire O_sdrc_cmd_ack;  
+wire O_sdrc_cmd_ack;
 
-assign sdrc_cmd_en = 0;
-assign sdrc_cmd = 3'b111;
 assign sdrc_precharge_ctrl = 1;
 assign sdram_power_down = 0;
 assign sdram_selfrefresh = 0;
-assign sdrc_addr = 21'b0;
 assign sdrc_dqm = 4'b0000;
-assign sdrc_data = 32'b0;
 assign sdrc_data_len = 8'b0;
 
 SDRAM_Controller_HS_Top u_sdram(
@@ -164,10 +162,91 @@ SDRAM_Controller_HS_Top u_sdram(
 );
 
 always @(posedge clk_sdram) begin
-    if (O_sdrc_init_done == 1) begin
-        io_voltage_led <= 1'b1;
-    end else begin
-        io_voltage_led <= 1'b0;
+    if (O_sdrc_init_done)
+        io_voltage_led0 <= 1'b0;
+    else
+        io_voltage_led0 <= 1'b1;
+end
+
+localparam WAIT_INIT         = 4'd0;
+localparam SEND_ACT          = 4'd1;
+localparam WAIT_ACT_ACK      = 4'd2;
+localparam SEND_WRITE        = 4'd3;
+localparam WAIT_WRITE_ACK   = 4'd4;
+localparam SEND_ACT_READ     = 4'd6;
+localparam WAIT_ACT_READ_ACK = 4'd7;
+localparam SEND_READ         = 4'd8;
+localparam WAIT_READ_ACK     = 4'd9;
+localparam COMPARE           = 4'd10;
+localparam PASS              = 4'd11;
+localparam FAIL              = 4'd12;
+localparam CAPTURE_DATA      = 4'd13; //新增：等待数据稳定，锁存读出数据
+
+reg [3:0] state;
+
+always @(posedge clk_sdram or negedge sdram_pll_lock) begin
+    if (!sdram_pll_lock) begin
+        state <= WAIT_INIT;
+        io_voltage_led1 <= 1'b1;
+        sdrc_cmd_en <= 1'b0;
+        sdrc_cmd <= 3'b000;
+        sdrc_addr <= 21'b0;
+        sdrc_data <= 32'd0;
+    end else if (O_sdrc_init_done) begin
+        sdrc_cmd_en <= 1'b0;
+        case (state)
+            WAIT_INIT: state <= SEND_ACT;
+            SEND_ACT: begin
+                sdrc_cmd <= 3'b011;
+                sdrc_addr <= 21'b0;
+                sdrc_cmd_en <= 1'b1;
+                state <= WAIT_ACT_ACK;
+            end
+            WAIT_ACT_ACK: begin
+                if (O_sdrc_cmd_ack)
+                    state <= SEND_WRITE;
+            end
+            SEND_WRITE: begin
+                sdrc_cmd <= 3'b100;
+                sdrc_data <= 32'h12345678;
+                sdrc_cmd_en <= 1'b1;
+                state <= WAIT_WRITE_ACK;
+            end
+            WAIT_WRITE_ACK: begin
+                if (O_sdrc_cmd_ack)
+                    state <= SEND_ACT_READ;
+            end
+            SEND_ACT_READ: begin
+                sdrc_cmd <= 3'b011;
+                sdrc_cmd_en <= 1'b1;
+                state <= WAIT_ACT_READ_ACK;
+            end
+            WAIT_ACT_READ_ACK: begin
+                if (O_sdrc_cmd_ack)
+                    state <= SEND_READ;
+            end
+            SEND_READ: begin
+                sdrc_cmd <= 3'b101;
+                sdrc_addr <= 21'b0;
+                sdrc_cmd_en <= 1'b1;
+                state <= WAIT_READ_ACK;
+            end
+            WAIT_READ_ACK: begin
+                if (O_sdrc_cmd_ack) begin
+                    state <= CAPTURE_DATA;
+                end
+            end
+            CAPTURE_DATA : state <= COMPARE;
+            COMPARE: begin
+                if (O_sdrc_data == 32'h12345678)
+                    state <= PASS;
+                else
+                    state <= FAIL;
+            end
+            PASS: io_voltage_led1 <= 1'b0;
+            FAIL: io_voltage_led1 <= 1'b1;
+            default: state <= WAIT_INIT;
+        endcase
     end
 end
 

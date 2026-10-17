@@ -1,10 +1,37 @@
 GowinSynthesis start
 Running parser ...
-ERROR (EX5998) : Cannot open Verilog file 'G:\ccsugp\TangNano20k\HDMI\src\testpattern.v'
 Analyzing Verilog file 'G:\ccsugp\TangNano20k\HDMI\src\TMDS_rPLL_371.25.v'
 Analyzing Verilog file 'G:\ccsugp\TangNano20k\HDMI\src\dvi_tx.v'
 Analyzing Verilog file 'G:\ccsugp\TangNano20k\HDMI\src\hdmi_top.v'
 Analyzing Verilog file 'G:\ccsugp\TangNano20k\HDMI\src\rPLL_108MHz.v'
 Analyzing Verilog file 'G:\ccsugp\TangNano20k\HDMI\src\sdram_controller_hs\sdram_controller_hs.v'
+Analyzing Verilog file 'G:\ccsugp\TangNano20k\HDMI\src\tmds_encoder.v'
 Analyzing Verilog file 'G:\ccsugp\TangNano20k\HDMI\src\video_timing_720p30.v'
+Compiling module 'hdmi_top'("G:\ccsugp\TangNano20k\HDMI\src\hdmi_top.v":1)
+Compiling module 'TMDS_rPLL'("G:\ccsugp\TangNano20k\HDMI\src\TMDS_rPLL_371.25.v":9)
+Compiling module 'video_timing_720p60'("G:\ccsugp\TangNano20k\HDMI\src\video_timing_720p30.v":1)
+Compiling module 'DVI_TX_Top'("G:\ccsugp\TangNano20k\HDMI\src\dvi_tx.v":1072)
+Compiling module '**'("G:\ccsugp\TangNano20k\HDMI\src\dvi_tx.v":1071)
+Compiling module 'rPLL_108MHz'("G:\ccsugp\TangNano20k\HDMI\src\rPLL_108MHz.v":10)
+Compiling module '**'("G:\ccsugp\TangNano20k\HDMI\src\sdram_controller_hs\sdram_controller_hs.v":1370)
+NOTE  (EX0101) : Current top module is "hdmi_top"
+[5%] Running netlist conversion ...
+WARN  (CV0016) : Input key_s1 is unused("G:\ccsugp\TangNano20k\HDMI\src\hdmi_top.v":3)
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+[95%] Generate netlist file "G:\ccsugp\TangNano20k\HDMI\impl\gwsynthesis\HDMI.vg" completed
+[100%] Generate report file "G:\ccsugp\TangNano20k\HDMI\impl\gwsynthesis\HDMI_syn.rpt.html" completed
 GowinSynthesis finish

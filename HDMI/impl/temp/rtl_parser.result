@@ -9,15 +9,23 @@
   "SubInsts" : [
    {
     "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
-    "InstLine" : 25,
+    "InstLine" : 135,
+    "InstName" : "u_sdram",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/sdram_controller_hs/sdram_controller_hs.v",
+    "ModuleLine" : 9,
+    "ModuleName" : "SDRAM_Controller_HS_Top"
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 36,
     "InstName" : "u_pll",
-    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/TMDS_rPLL.v",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/TMDS_rPLL_371.25.v",
     "ModuleLine" : 9,
     "ModuleName" : "TMDS_rPLL"
    },
    {
     "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
-    "InstLine" : 45,
+    "InstLine" : 56,
     "InstName" : "u_video_timing_720p60",
     "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/video_timing_720p30.v",
     "ModuleLine" : 1,
@@ -25,7 +33,7 @@
    },
    {
     "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
-    "InstLine" : 75,
+    "InstLine" : 86,
     "InstName" : "u_dvi_tx_top",
     "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/dvi_tx.v",
     "ModuleLine" : 1072,
@@ -40,15 +48,23 @@
       "ModuleName" : "~rgb2dvi.DVI_TX_Top"
      }
     ]
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 109,
+    "InstName" : "u_rPLL_108MHz",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/rPLL_108MHz.v",
+    "ModuleLine" : 10,
+    "ModuleName" : "rPLL_108MHz"
    }
   ]
  },
  {
-  "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/testpattern.v",
-  "InstLine" : 20,
-  "InstName" : "testpattern",
-  "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/testpattern.v",
-  "ModuleLine" : 20,
-  "ModuleName" : "testpattern"
+  "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/tmds_encoder.v",
+  "InstLine" : 1,
+  "InstName" : "tmds_encoder",
+  "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/tmds_encoder.v",
+  "ModuleLine" : 1,
+  "ModuleName" : "tmds_encoder"
  }
 ]

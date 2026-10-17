@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="hdmi_top" Lut="11" T_Register="97(0)" T_Alu="69(0)" T_Lut="294(11)">
+<Module name="hdmi_top" Register="169" Alu="15" Lut="302" T_Register="266(169)" T_Alu="84(15)" T_Lut="587(302)">
  <SubModule name="u_pll"/>
- <SubModule name="u_video_timing_720p60" Register="24" Lut="54" T_Register="24(24)" T_Lut="54(54)"/>
+ <SubModule name="u_video_timing_720p60" Register="24" Lut="56" T_Register="24(24)" T_Lut="56(56)"/>
  <SubModule name="u_dvi_tx_top" Register="73" Alu="69" Lut="229" T_Register="73(73)" T_Alu="69(69)" T_Lut="229(229)"/>
+ <SubModule name="u_rPLL_108MHz"/>
 </Module>
