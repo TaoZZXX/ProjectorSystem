@@ -1,0 +1,43 @@
+GowinSynthesis start
+Running parser ...
+Analyzing Verilog file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v'
+Analyzing included file 'top_define.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":22)
+Back to file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":22)
+Analyzing included file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\static_macro_define.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":23)
+Back to file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":23)
+Analyzing included file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash_const_defines.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":24)
+Back to file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":24)
+Analyzing Verilog file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v'
+Analyzing included file 'top_define.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+Back to file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+Analyzing included file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\static_macro_define.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+Back to file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+Analyzing included file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash_const_defines.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+Back to file 'G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+Compiling module 'SPI_Flash_Interface_Lite_Top'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":26)
+Compiling module '**'("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+WARN  (EX2420) : Latch inferred for net '**'; We do not recommend the use of latches in FPGA designs, as they may lead to timing problems("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+NOTE  (EX0101) : Current top module is "SPI_Flash_Interface_Lite_Top"
+[5%] Running netlist conversion ...
+WARN  (CV0020) : Input I_haddr_reg[31:7] is unused("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":30)
+WARN  (CV0020) : Input I_haddr_reg[1:0] is unused("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spi_flash_interface_lite_top.v":30)
+Running device independent optimization ...
+[10%] Optimizing Phase 0 completed
+[15%] Optimizing Phase 1 completed
+[25%] Optimizing Phase 2 completed
+Running inference ...
+[30%] Inferring Phase 0 completed
+[40%] Inferring Phase 1 completed
+[50%] Inferring Phase 2 completed
+[55%] Inferring Phase 3 completed
+Running technical mapping ...
+[60%] Tech-Mapping Phase 0 completed
+[65%] Tech-Mapping Phase 1 completed
+WARN  (DI0003) : Latch inferred for net 'latch_out';We do not recommend the use of latches in FPGA designs, as they may lead to timing problems("G:\soft\Gowin\Gowin_V1.9.11.03_Education_x64\IDE\ipcore\SPIFlashInterfaceLite\data\spiflash.v":1523)
+[75%] Tech-Mapping Phase 2 completed
+[80%] Tech-Mapping Phase 3 completed
+[90%] Tech-Mapping Phase 4 completed
+[95%] Generate netlist file "G:\ccsugp\TangNano20k\HDMI\src\spi_flash_interface_lite\temp\SPIFlashInterfaceLite\spi_flash_interface_lite.vg" completed
+Generate template file "G:\ccsugp\TangNano20k\HDMI\src\spi_flash_interface_lite\temp\SPIFlashInterfaceLite\spi_flash_interface_lite_tmp.v" completed
+[100%] Generate report file "G:\ccsugp\TangNano20k\HDMI\src\spi_flash_interface_lite\temp\SPIFlashInterfaceLite\spi_flash_interface_lite_syn.rpt.html" completed
+GowinSynthesis finish

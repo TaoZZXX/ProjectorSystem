@@ -28,6 +28,10 @@
   {
    "Path" : "G:/ccsugp/TangNano20k/HDMI/src/video_timing_720p30.v",
    "Type" : "verilog"
+  },
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/spi_flash_interface_lite/spi_flash_interface_lite.v",
+   "Type" : "verilog"
   }
  ],
  "IncludePath" : [

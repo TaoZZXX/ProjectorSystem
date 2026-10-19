@@ -172,7 +172,7 @@ localparam WAIT_INIT         = 4'd0;
 localparam SEND_ACT          = 4'd1;
 localparam WAIT_ACT_ACK      = 4'd2;
 localparam SEND_WRITE        = 4'd3;
-localparam WAIT_WRITE_ACK   = 4'd4;
+localparam WAIT_WRITE_ACK    = 4'd4;
 localparam SEND_ACT_READ     = 4'd6;
 localparam WAIT_ACT_READ_ACK = 4'd7;
 localparam SEND_READ         = 4'd8;
@@ -180,72 +180,153 @@ localparam WAIT_READ_ACK     = 4'd9;
 localparam COMPARE           = 4'd10;
 localparam PASS              = 4'd11;
 localparam FAIL              = 4'd12;
-localparam CAPTURE_DATA      = 4'd13; //新增：等待数据稳定，锁存读出数据
+localparam CAPTURE_DATA      = 4'd13;
 
-reg [3:0] state;
+reg [3:0] sdram_state;
 
 always @(posedge clk_sdram or negedge sdram_pll_lock) begin
     if (!sdram_pll_lock) begin
-        state <= WAIT_INIT;
+        sdram_state <= WAIT_INIT;
         io_voltage_led1 <= 1'b1;
         sdrc_cmd_en <= 1'b0;
         sdrc_cmd <= 3'b000;
-        sdrc_addr <= 21'b0;
+        sdrc_addr <= 21'b100000;
         sdrc_data <= 32'd0;
     end else if (O_sdrc_init_done) begin
         sdrc_cmd_en <= 1'b0;
-        case (state)
-            WAIT_INIT: state <= SEND_ACT;
+        case (sdram_state)
+            WAIT_INIT: stsdram_stateate <= SEND_ACT;
             SEND_ACT: begin
                 sdrc_cmd <= 3'b011;
-                sdrc_addr <= 21'b0;
+                sdrc_addr <= 21'b100000;
                 sdrc_cmd_en <= 1'b1;
-                state <= WAIT_ACT_ACK;
+                sdram_state <= WAIT_ACT_ACK;
             end
             WAIT_ACT_ACK: begin
                 if (O_sdrc_cmd_ack)
-                    state <= SEND_WRITE;
+                    sdram_state <= SEND_WRITE;
             end
             SEND_WRITE: begin
                 sdrc_cmd <= 3'b100;
                 sdrc_data <= 32'h12345678;
                 sdrc_cmd_en <= 1'b1;
-                state <= WAIT_WRITE_ACK;
+                sdram_state <= WAIT_WRITE_ACK;
             end
             WAIT_WRITE_ACK: begin
                 if (O_sdrc_cmd_ack)
-                    state <= SEND_ACT_READ;
+                    sdram_state <= SEND_ACT_READ;
             end
             SEND_ACT_READ: begin
                 sdrc_cmd <= 3'b011;
                 sdrc_cmd_en <= 1'b1;
-                state <= WAIT_ACT_READ_ACK;
+                sdram_state <= WAIT_ACT_READ_ACK;
             end
             WAIT_ACT_READ_ACK: begin
                 if (O_sdrc_cmd_ack)
-                    state <= SEND_READ;
+                    sdram_state <= SEND_READ;
             end
             SEND_READ: begin
                 sdrc_cmd <= 3'b101;
-                sdrc_addr <= 21'b0;
+                sdrc_addr <= 21'b100000;
                 sdrc_cmd_en <= 1'b1;
-                state <= WAIT_READ_ACK;
+                sdram_state <= WAIT_READ_ACK;
             end
             WAIT_READ_ACK: begin
                 if (O_sdrc_cmd_ack) begin
-                    state <= CAPTURE_DATA;
+                    sdram_state <= CAPTURE_DATA;
                 end
             end
-            CAPTURE_DATA : state <= COMPARE;
+            CAPTURE_DATA : sdram_state <= COMPARE;
             COMPARE: begin
                 if (O_sdrc_data == 32'h12345678)
-                    state <= PASS;
+                    sdram_state <= PASS;
                 else
-                    state <= FAIL;
+                    sdram_state <= FAIL;
             end
             PASS: io_voltage_led1 <= 1'b0;
             FAIL: io_voltage_led1 <= 1'b1;
-            default: state <= WAIT_INIT;
+            default: sdram_state <= WAIT_INIT;
+        endcase
+    end
+end
+
+
+reg [31:0] haddr_reg;
+wire [31:0] hrdata_reg;
+reg hreadyin_reg;
+wire hreadyout_reg;
+wire hresp_reg;
+reg hsel_reg;
+reg [1:0] htrans_reg;
+reg [31:0] hwdata_reg;
+reg hwrite_reg;
+reg flash_ck;
+reg flash_cs_n;
+reg flash_hold_n;
+reg flash_wp_n;
+reg flash_do;
+reg flash_di;
+
+SPI_Flash_Interface_Lite_Top u_flash(
+    .I_hclk             (clk_sdram),        // 输入：AHB 总线时钟
+    .I_hresetn          (sdram_pll_lock),   // 输入：AHB 总线低电平有效复位
+    .I_haddr_reg        (haddr_reg),        // 输入：[31:0] AHB 寄存器地址
+    .O_hrdata_reg       (hrdata_reg),       // 输出：[31:0] AHB 寄存器读数据
+    .I_hreadyin_reg     (hreadyin_reg),     // 输入：AHB 主设备就绪信号
+    .O_hreadyout_reg    (hreadyout_reg),    // 输出：AHB 从设备就绪信号
+    .O_hresp_reg        (hresp_reg),        // 输出：[1:0] AHB 传输响应
+    .I_hsel_reg         (hsel_reg),         // 输入：AHB 从设备选择信号 // 0补选中ip
+    .I_htrans_reg       (htrans_reg),       // 输入：[1:0] AHB 传输类型
+    .I_hwdata_reg       (hwdata_reg),       // 输入：[31:0] AHB 写数据
+    .I_hwrite_reg       (hwrite_reg),       // 输入：AHB 读写控制，1 为写，0 为读
+    .O_flash_ck         (flash_ck),         // 输出：SPI Flash 时钟
+    .O_flash_cs_n       (flash_cs_n),       // 输出：SPI Flash 片选，低电平有效
+    .IO_flash_hold_n    (flash_hold_n),     // 双向：SPI Flash 保持信号
+    .IO_flash_wp_n      (flash_wp_n),       // 双向：SPI Flash 写保护信号
+    .IO_flash_do        (flash_do),         // 双向：SPI Flash DO/MISO 数据线
+    .IO_flash_di        (flash_di)          // 双向：SPI Flash DI/MOSI 数据线
+);
+
+localparam IDEL = 4'd0;
+localparam ADDR = 4'd1;
+localparam DATA = 4'd2;
+localparam WAIT = 4'd3;
+localparam DONE = 4'd4;
+
+reg [3:0] flash_state;
+
+always @(posedge clk_sdram or negedge sdram_pll_lock) begin
+    if (!sdram_pll_lock) begin
+        flash_state <= IDEL;
+        haddr_reg <= 32'd0;
+        hwdata_reg <= 32'd0;
+        hsel_reg <= 0;
+        htrans_reg  <= 2'b00;
+        hwrite_reg  <= 1'b0;
+        hreadyin_reg <= 1'b1;
+    end else begin
+        case (flash_state)
+            IDEL : begin
+                hsel_reg <= 0;
+                htrans_reg <= 2'b00;
+                flash_state <= ADDR;
+            end 
+            ADDR : begin
+                hsel_reg <= 1'b1;
+                haddr_reg <= 32'b0;
+                htrans_reg <= 2'b10;
+                flash_state <= DATA;
+            end
+            DATA : begin
+                hwdata_reg <= 32'h12345678;
+                flash_state <= WAIT;
+            end
+            WAIT : begin
+                if (hreadyout_reg) begin
+                    flash_state <= DONE;
+                end
+            end
+            default: flash_state <= IDEL;
         endcase
     end
 end
