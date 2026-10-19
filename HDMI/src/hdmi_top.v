@@ -255,7 +255,7 @@ reg [31:0] haddr_reg;
 wire [31:0] hrdata_reg;
 reg hreadyin_reg;
 wire hreadyout_reg;
-wire hresp_reg;
+wire [1:0] hresp_reg;
 reg hsel_reg;
 reg [1:0] htrans_reg;
 reg [31:0] hwdata_reg;
@@ -313,18 +313,25 @@ always @(posedge clk_sdram or negedge sdram_pll_lock) begin
             end 
             ADDR : begin
                 hsel_reg <= 1'b1;
-                haddr_reg <= 32'b0;
+                haddr_reg <= 32'h2C;
                 htrans_reg <= 2'b10;
+                hwrite_reg <= 1'b1;
                 flash_state <= DATA;
             end
             DATA : begin
                 hwdata_reg <= 32'h12345678;
+                hwrite_reg <= 1'b1;
+                hsel_reg <= 1'b0;
+                htrans_reg <= 2'b00;
                 flash_state <= WAIT;
             end
             WAIT : begin
                 if (hreadyout_reg) begin
                     flash_state <= DONE;
                 end
+            end
+            DONE : begin
+                hwrite_reg <= 1'b0;
             end
             default: flash_state <= IDEL;
         endcase
