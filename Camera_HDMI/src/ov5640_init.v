@@ -1,4 +1,5 @@
-// OV5640 上电配置：DVP、320x240、RGB565。初始化寄存器序列改编自
+// OV5640 上电配置：DVP、VGA 640x480 RGB565。FPGA 后续裁取中间 640x360。
+// 初始化寄存器序列改编自
 // STMicroelectronics stm32-ov5640/ov5640.c (BSD-3-Clause)。
 // https://github.com/STMicroelectronics/stm32-ov5640
 module ov5640_init (
@@ -301,10 +302,11 @@ module ov5640_init (
             9'd253: setting = 24'h303660;
             9'd254: setting = 24'h303713;
             9'd255: setting = 24'h310801;
-            9'd256: setting = 24'h380801;
-            9'd257: setting = 24'h380940;
-            9'd258: setting = 24'h380a00;
-            9'd259: setting = 24'h380bb4;
+            // 传感器输出 VGA 640x480；FPGA 只保存中间的 360 行。
+            9'd256: setting = 24'h380802;
+            9'd257: setting = 24'h380980;
+            9'd258: setting = 24'h380a01;
+            9'd259: setting = 24'h380be0;
             9'd260: setting = 24'h430061;
             9'd261: setting = 24'h501f01;
             9'd262: setting = 24'h474022;

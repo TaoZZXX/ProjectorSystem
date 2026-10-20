@@ -1,5 +1,5 @@
-// OV5640 320x180 RGB565 -> SDRAM 双帧 -> 720p60 HDMI。
-// 原始像素完整保存，3 倍放大到居中的 960x540 窗口。
+// OV5640 VGA 输入裁成 640x360 RGB565，经 SDRAM 双帧缓存后送到 720p60 HDMI。
+// 画面按 2 倍整数放大，铺满 1280x720 有效显示区。
 module camera_hdmi_top (
     input wire clk, cam_pclk, cam_vsync, cam_href,
     input wire [7:0] cam_data,
@@ -35,38 +35,38 @@ module camera_hdmi_top (
     video_timing_720p60 u_video_timing (.pix_clk(pix_clk), .rst_n(pll_lock),
         .x(x), .y(y), .de(de), .hsync(hs), .vsync(vs));
 
-    wire in_win = x >= 12'd160 && x < 12'd1120 && y >= 12'd90 && y < 12'd630;
-    reg [8:0] src_x;
-    reg [7:0] src_y;
-    reg [1:0] repeat_x, repeat_y;
+    wire in_win = x < 12'd1280 && y < 12'd720;
+    reg [9:0] src_x;
+    reg [8:0] src_y;
+    reg repeat_x, repeat_y;
     always @(posedge pix_clk or negedge pll_lock) begin
         if (!pll_lock) begin
-            src_x <= 9'd0; src_y <= 8'd0; repeat_x <= 2'd0; repeat_y <= 2'd0;
+            src_x <= 10'd0; src_y <= 9'd0; repeat_x <= 1'b0; repeat_y <= 1'b0;
         end else if (in_win) begin
-            if (x == 12'd160) begin
-                src_x <= 9'd0; repeat_x <= 2'd0;
-                if (y == 12'd90) begin src_y <= 8'd0; repeat_y <= 2'd0; end
-                else if (repeat_y == 2'd2) begin
-                    src_y <= src_y + 1'b1; repeat_y <= 2'd0;
-                end else repeat_y <= repeat_y + 1'b1;
-            end else if (repeat_x == 2'd2) begin
-                repeat_x <= 2'd0; src_x <= src_x + 1'b1;
+            if (x == 12'd0) begin
+                src_x <= 10'd0; repeat_x <= 1'b0;
+                if (y == 12'd0) begin src_y <= 9'd0; repeat_y <= 1'b0; end
+                else if (repeat_y) begin
+                    src_y <= src_y + 1'b1; repeat_y <= 1'b0;
+                end else repeat_y <= 1'b1;
+            end else if (repeat_x) begin
+                repeat_x <= 1'b0; src_x <= src_x + 1'b1;
             end else repeat_x <= repeat_x + 1'b1;
         end
     end
     // 在 RAM 采样的同一拍给出当前显示坐标，补偿计数器的非阻塞赋值延迟。
-    wire [8:0] read_x = !in_win || x == 12'd160 ? 9'd0 :
-                       repeat_x == 2'd2 ? src_x + 1'b1 : src_x;
-    wire [7:0] read_y = !in_win || y == 12'd90 ? 8'd0 :
-                       x == 12'd160 && repeat_y == 2'd2 ? src_y + 1'b1 : src_y;
-    // 第一行在窗口开始前预取，后续每三个显示行预取一条新的源行。
-    wire first_request = y == 12'd89 && x == 12'd0;
-    wire following_request = in_win && x == 12'd161 && repeat_y == 2'd0 && src_y < 8'd179;
-    wire [7:0] requested_line = first_request ? 8'd0 : src_y + 1'b1;
+    wire [9:0] read_x = !in_win || x == 12'd0 ? 10'd0 :
+                       repeat_x ? src_x + 1'b1 : src_x;
+    wire [8:0] read_y = !in_win || y == 12'd0 ? 9'd0 :
+                       x == 12'd0 && repeat_y ? src_y + 1'b1 : src_y;
+    // 第一行在场消隐期预取；之后每两条显示行预取一条新的源行。
+    wire first_request = y == 12'd721 && x == 12'd0;
+    wire following_request = in_win && x == 12'd1 && !repeat_y && src_y < 9'd359;
+    wire [8:0] requested_line = first_request ? 9'd0 : src_y + 1'b1;
 
     wire cap_valid, cap_sof;
     wire [15:0] cap_pixel;
-    wire [8:0] debug_lines, debug_pixels;
+    wire [9:0] debug_lines, debug_pixels;
     camera_capture u_capture (
         .cam_pclk(cam_pclk), .cam_vsync(cam_vsync), .cam_href(cam_href),
         .cam_data(cam_data), .ready(init_ready), .pixel_valid(cap_valid),
@@ -133,6 +133,6 @@ module camera_hdmi_top (
         .report_pass(frame_sync[1]), .fail_code({6'd0, init_error, frame_sync[1]}),
         .jedec_id({sensor_id, 6'd0, init_ready, init_error}),
         .readback_data(memory_debug),
-        .expected_data({7'd0, debug_lines, 7'd0, debug_pixels}), .uart_tx(uart_tx)
+        .expected_data({6'd0, debug_lines, 6'd0, debug_pixels}), .uart_tx(uart_tx)
     );
 endmodule

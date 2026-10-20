@@ -1,4 +1,4 @@
-// 320x180 RGB565 双帧 SDRAM 缓存，保留摄像头的全部像素及 16 位颜色。
+// 640x360 RGB565 双帧 SDRAM 缓存，保留有效区域的全部像素及 16 位颜色。
 // 摄像头 -> 异步 FIFO -> SDRAM 写入；SDRAM -> 双行缓存 -> HDMI。
 // 每个 SDRAM 32 位字放两个相邻像素，低 16 位为左像素。
 module sdram_framebuffer (
@@ -7,11 +7,11 @@ module sdram_framebuffer (
     input wire [15:0] cam_pixel,
     input wire pix_clk,
     input wire [11:0] x, y,
-    input wire [8:0] source_x,
-    input wire [7:0] source_y,
+    input wire [9:0] source_x,
+    input wire [8:0] source_y,
     input wire window_active,
     input wire next_line_request,
-    input wire [7:0] next_line,
+    input wire [8:0] next_line,
     output wire [15:0] pixel_out,
     output reg frame_valid = 1'b0,
     output wire [31:0] debug,
@@ -22,8 +22,8 @@ module sdram_framebuffer (
     output wire [1:0] O_sdram_ba,
     inout wire [31:0] IO_sdram_dq
 );
-    localparam [14:0] FRAME_WORDS = 15'd28800;
-    // 帧页按 65536 个 32 位字对齐，避免页间地址重叠。
+    localparam [16:0] FRAME_WORDS = 17'd115200;
+    // 每帧占 115200 个 32 位字；双帧按 131072 字对齐，互不重叠。
     wire mem_clk, chip_clk, mem_lock;
     rPLL_108MHz u_mem_pll (.clkin(clk), .clkout(mem_clk),
         .clkoutp(chip_clk), .lock(mem_lock));
@@ -57,9 +57,9 @@ module sdram_framebuffer (
         .O_sdrc_data(read_data), .O_sdrc_init_done(init_done), .O_sdrc_cmd_ack(ack)
     );
 
-    // 512x47 FIFO：15 位帧内字地址 + 32 位像素。
+    // 512x49 FIFO：17 位帧内字地址 + 32 位像素。
     // 指针额外带一位回卷位；满时丢弃当前整帧剩余数据，绝不拼接两帧。
-    (* syn_ramstyle = "block_ram" *) reg [46:0] fifo_mem [0:511];
+    (* syn_ramstyle = "block_ram" *) reg [48:0] fifo_mem [0:511];
     reg [9:0] wp = 10'd0, wg = 10'd0, rp, rg;
     reg [9:0] rg1 = 10'd0, rg2 = 10'd0, wg1, wg2;
     wire [9:0] wp_next = wp + 1'b1;
@@ -69,17 +69,17 @@ module sdram_framebuffer (
     wire fifo_empty = rg == wg2;
     reg half = 1'b0, drop_frame = 1'b1;
     reg [15:0] first_pixel = 16'd0;
-    reg [14:0] camera_word = 15'd0;
+    reg [16:0] camera_word = 17'd0;
     reg [15:0] dropped_frames = 16'd0;
     always @(posedge cam_pclk or negedge reset_n) begin
         if (!reset_n) begin
             wp <= 10'd0; wg <= 10'd0; rg1 <= 10'd0; rg2 <= 10'd0;
-            half <= 1'b0; drop_frame <= 1'b1; camera_word <= 15'd0;
+            half <= 1'b0; drop_frame <= 1'b1; camera_word <= 17'd0;
             first_pixel <= 16'd0; dropped_frames <= 16'd0;
         end else begin
             rg1 <= rg; rg2 <= rg1;
             if (cam_sof) begin
-                half <= 1'b0; camera_word <= 15'd0; drop_frame <= 1'b0;
+                half <= 1'b0; camera_word <= 17'd0; drop_frame <= 1'b0;
             end else if (cam_valid && !drop_frame) begin
                 if (!half) begin first_pixel <= cam_pixel; half <= 1'b1; end
                 else begin
@@ -97,7 +97,7 @@ module sdram_framebuffer (
             end
         end
     end
-    reg [46:0] fifo_q;
+    reg [48:0] fifo_q;
     always @(posedge mem_clk) fifo_q <= fifo_mem[rp[8:0]];
 
     // 帧发布握手：显示侧只在场消隐切页，写侧在收到确认前不复用旧页。
@@ -122,7 +122,7 @@ module sdram_framebuffer (
 
     // 行请求通过翻转位跨域，行号在下一次请求前保持不变。
     reg request_toggle = 1'b0;
-    reg [7:0] request_line = 8'd0;
+    reg [8:0] request_line = 9'd0;
     reg [1:0] request_sync;
     reg request_done;
     always @(posedge pix_clk or negedge reset_n) begin
@@ -133,12 +133,12 @@ module sdram_framebuffer (
         end
     end
 
-    // 两条 320 像素行缓存：读取当前行时，从 SDRAM 预取下一行。
-    (* syn_ramstyle = "block_ram" *) reg [31:0] line0 [0:159];
-    (* syn_ramstyle = "block_ram" *) reg [31:0] line1 [0:159];
+    // 两条 640 像素行缓存；每个 SDRAM 字保存两个相邻 RGB565 像素。
+    (* syn_ramstyle = "block_ram" *) reg [31:0] line0 [0:319];
+    (* syn_ramstyle = "block_ram" *) reg [31:0] line1 [0:319];
     reg [31:0] line0_q, line1_q;
     reg parity_q, half_q, active_q;
-    wire [7:0] line_read_addr = window_active ? source_x[8:1] : 8'd0;
+    wire [8:0] line_read_addr = window_active ? source_x[9:1] : 9'd0;
     always @(posedge pix_clk) begin
         line0_q <= line0[line_read_addr]; line1_q <= line1[line_read_addr];
         parity_q <= source_y[0]; half_q <= source_x[0]; active_q <= window_active;
@@ -151,8 +151,8 @@ module sdram_framebuffer (
         READ_CAPTURE = 4'd7, GAP = 4'd8;
     reg [3:0] state;
     reg reading, accepting_frame, write_page;
-    reg [14:0] expected_word;
-    reg [7:0] fetch_line, fetch_word;
+    reg [16:0] expected_word;
+    reg [8:0] fetch_line, fetch_word;
     reg fetch_page, fetch_token;
     reg [15:0] completed_frames, completed_lines;
     always @(posedge mem_clk or negedge mem_run) begin
@@ -162,7 +162,7 @@ module sdram_framebuffer (
             ack_sync <= 2'd0; display_page_sync <= 2'd0; request_sync <= 2'd0;
             published_page <= 1'b0; publish_toggle <= 1'b0; request_done <= 1'b0;
             reading <= 1'b0; accepting_frame <= 1'b0; write_page <= 1'b1;
-            expected_word <= 15'd0; fetch_line <= 8'd0; fetch_word <= 8'd0;
+            expected_word <= 17'd0; fetch_line <= 9'd0; fetch_word <= 9'd0;
             fetch_page <= 1'b0; fetch_token <= 1'b0;
             completed_frames <= 16'd0; completed_lines <= 16'd0;
         end else begin
@@ -176,22 +176,22 @@ module sdram_framebuffer (
                     // 行读取优先，保证 HDMI 连续输出。FIFO 吸收摄像头的暂时积压。
                     if (request_sync[1] != request_done) begin
                         reading <= 1'b1; fetch_line <= request_line;
-                        fetch_word <= 8'd0; fetch_page <= display_page_sync[1];
+                        fetch_word <= 9'd0; fetch_page <= display_page_sync[1];
                         fetch_token <= request_sync[1]; state <= ACT;
                     end else if (!fifo_empty) state <= FETCH;
                 end
                 FETCH: state <= CHECK;
                 CHECK: begin
-                    if (fifo_q[46:32] == 15'd0) begin
+                    if (fifo_q[48:32] == 17'd0) begin
                         if (ack_sync[1] == publish_toggle) begin
                             write_page <= ~published_page;
-                            accepting_frame <= 1'b1; expected_word <= 15'd0;
+                            accepting_frame <= 1'b1; expected_word <= 17'd0;
                             reading <= 1'b0; write_data <= fifo_q[31:0]; state <= ACT;
                         end else begin
                             accepting_frame <= 1'b0; rp <= rp_next;
                             rg <= (rp_next >> 1) ^ rp_next; state <= IDLE;
                         end
-                    end else if (accepting_frame && fifo_q[46:32] == expected_word) begin
+                    end else if (accepting_frame && fifo_q[48:32] == expected_word) begin
                         reading <= 1'b0; write_data <= fifo_q[31:0]; state <= ACT;
                     end else begin
                         accepting_frame <= 1'b0; rp <= rp_next;
@@ -199,10 +199,10 @@ module sdram_framebuffer (
                     end
                 end
                 ACT: begin
-                    // 地址单位为 32 位字；bit16 选择帧页，低位为帧内字偏移。
-                    addr <= reading ? {4'd0, fetch_page, 16'd0} +
-                        fetch_line * 21'd160 + fetch_word :
-                        {4'd0, write_page, 16'd0} + {6'd0, expected_word};
+                    // 地址单位为 32 位字；bit17 选择帧页，低位为帧内字偏移。
+                    addr <= reading ? {3'd0, fetch_page, 17'd0} +
+                        {12'd0, fetch_line} * 21'd320 + {12'd0, fetch_word} :
+                        {3'd0, write_page, 17'd0} + {4'd0, expected_word};
                     cmd <= 3'b011; cmd_en <= 1'b1; state <= ACT_ACK;
                 end
                 ACT_ACK: if (ack) state <= COMMAND;
@@ -226,7 +226,7 @@ module sdram_framebuffer (
                 READ_CAPTURE: begin
                     if (fetch_line[0]) line1[fetch_word] <= read_data;
                     else line0[fetch_word] <= read_data;
-                    if (fetch_word == 8'd159) begin
+                    if (fetch_word == 9'd319) begin
                         request_done <= fetch_token;
                         completed_lines <= completed_lines + 1'b1; state <= GAP;
                     end else begin fetch_word <= fetch_word + 1'b1; state <= ACT; end
