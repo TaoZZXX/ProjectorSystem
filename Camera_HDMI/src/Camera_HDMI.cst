@@ -1,0 +1,45 @@
+// 接线依据：仓库根目录 ov5640摄像头接线.txt。
+// FLASH 接到 29 脚，但此工程不声明/驱动该脚，保持高阻。
+IO_LOC "clk" 4;
+IO_PORT "clk" IO_TYPE=LVCMOS33;
+IO_LOC "cam_data[0]" 15;
+IO_LOC "cam_data[1]" 16;
+IO_LOC "cam_data[2]" 17;
+IO_LOC "cam_data[3]" 18;
+IO_LOC "cam_data[4]" 19;
+IO_LOC "cam_data[5]" 20;
+IO_LOC "cam_data[6]" 73;
+IO_LOC "cam_data[7]" 74;
+IO_PORT "cam_data[0]" IO_TYPE=LVCMOS33;
+IO_PORT "cam_data[1]" IO_TYPE=LVCMOS33;
+IO_PORT "cam_data[2]" IO_TYPE=LVCMOS33;
+IO_PORT "cam_data[3]" IO_TYPE=LVCMOS33;
+IO_PORT "cam_data[4]" IO_TYPE=LVCMOS33;
+IO_PORT "cam_data[5]" IO_TYPE=LVCMOS33;
+IO_PORT "cam_data[6]" IO_TYPE=LVCMOS33;
+IO_PORT "cam_data[7]" IO_TYPE=LVCMOS33;
+IO_LOC "cam_pclk" 75;
+IO_PORT "cam_pclk" IO_TYPE=LVCMOS33;
+// 实测 25 脚为行脉冲、26 脚为帧脉冲；按实际电气信号映射。
+IO_LOC "cam_vsync" 26;
+IO_PORT "cam_vsync" IO_TYPE=LVCMOS33;
+IO_LOC "cam_href" 25;
+IO_PORT "cam_href" IO_TYPE=LVCMOS33;
+IO_LOC "cam_rst_n" 27;
+IO_PORT "cam_rst_n" IO_TYPE=LVCMOS33 DRIVE=8;
+IO_LOC "cam_pwdn" 28;
+IO_PORT "cam_pwdn" IO_TYPE=LVCMOS33 DRIVE=8;
+IO_LOC "cam_scl" 30;
+IO_PORT "cam_scl" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "cam_sda" 31;
+IO_PORT "cam_sda" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "uart_tx" 69;
+IO_PORT "uart_tx" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC "dvi_txc_p" 33,34;
+IO_PORT "dvi_txc_p" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
+IO_LOC "dvi_tx2_p" 39,40;
+IO_PORT "dvi_tx2_p" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
+IO_LOC "dvi_tx1_p" 37,38;
+IO_PORT "dvi_tx1_p" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
+IO_LOC "dvi_tx0_p" 35,36;
+IO_PORT "dvi_tx0_p" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;

@@ -1,0 +1,8 @@
+﻿# 综合/布线输出
+impl/
+# 本地备份与草稿
+_backup_*/
+src/_draft/
+# 调试用的屏幕照片
+_photo_*.png
+_screen_zoom.png
