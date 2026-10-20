@@ -9,8 +9,11 @@
         <File path="G:\ccsugp\TangNano20k\HDMI\src\hdmi_top.v" type="verilog"/>
         <File path="G:\ccsugp\TangNano20k\HDMI\src\rPLL_108MHz.v" type="verilog"/>
         <File path="G:\ccsugp\TangNano20k\HDMI\src\sdram_controller_hs\sdram_controller_hs.v" type="verilog"/>
+        <File path="G:\ccsugp\TangNano20k\HDMI\src\spi_flash_interface_lite\spi_flash_interface_lite.v" type="verilog"/>
         <File path="G:\ccsugp\TangNano20k\HDMI\src\tmds_encoder.v" type="verilog"/>
         <File path="G:\ccsugp\TangNano20k\HDMI\src\video_timing_720p30.v" type="verilog"/>
+        <File path="G:\ccsugp\TangNano20k\HDMI\src\spi_flash_test.v" type="verilog"/>
+        <File path="G:\ccsugp\TangNano20k\HDMI\src\uart_hex_report.v" type="verilog"/>
     </FileList>
     <OptionList>
         <Option type="disable_insert_pad" value="0"/>

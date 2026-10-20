@@ -22,6 +22,10 @@
    "Type" : "verilog"
   },
   {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/spi_flash_interface_lite/spi_flash_interface_lite.v",
+   "Type" : "verilog"
+  },
+  {
    "Path" : "G:/ccsugp/TangNano20k/HDMI/src/tmds_encoder.v",
    "Type" : "verilog"
   },
@@ -30,7 +34,11 @@
    "Type" : "verilog"
   },
   {
-   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/spi_flash_interface_lite/spi_flash_interface_lite.v",
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/spi_flash_test.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "G:/ccsugp/TangNano20k/HDMI/src/uart_hex_report.v",
    "Type" : "verilog"
   }
  ],

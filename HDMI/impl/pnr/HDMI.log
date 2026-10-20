@@ -7,6 +7,7 @@ Running placement......
 [10%] Placement Phase 0 completed
 [20%] Placement Phase 1 completed
 [30%] Placement Phase 2 completed
+WARN  (TA1132) :  'O_flash_ck_d' was determined to be a clock but was not created.
 [50%] Placement Phase 3 completed
 Running routing......
 [60%] Routing Phase 0 completed
@@ -26,5 +27,5 @@ Generate file "G:\ccsugp\TangNano20k\HDMI\impl\pnr\HDMI.pin.html" completed
 Generate file "G:\ccsugp\TangNano20k\HDMI\impl\pnr\HDMI.rpt.html" completed
 Generate file "G:\ccsugp\TangNano20k\HDMI\impl\pnr\HDMI.rpt.txt" completed
 Generate file "G:\ccsugp\TangNano20k\HDMI\impl\pnr\HDMI.tr.html" completed
-Mon Oct 19 12:17:24 2026
+Tue Oct 20 09:32:25 2026
 

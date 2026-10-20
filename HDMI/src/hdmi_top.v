@@ -20,7 +20,15 @@ module hdmi_top (
     output wire [1:0]  O_sdram_ba,
     inout  wire [31:0] IO_sdram_dq,
     output reg io_voltage_led0,
-    output reg io_voltage_led1
+    output reg io_voltage_led1,
+    output wire io_voltage_led2,
+    output wire uart_tx,
+    output wire O_flash_ck,
+    output wire O_flash_cs_n,
+    inout  wire IO_flash_hold_n,
+    inout  wire IO_flash_wp_n,
+    inout  wire IO_flash_do,
+    inout  wire IO_flash_di
 );
 
 wire clk_serial;
@@ -195,7 +203,7 @@ always @(posedge clk_sdram or negedge sdram_pll_lock) begin
     end else if (O_sdrc_init_done) begin
         sdrc_cmd_en <= 1'b0;
         case (sdram_state)
-            WAIT_INIT: stsdram_stateate <= SEND_ACT;
+            WAIT_INIT: sdram_state <= SEND_ACT;
             SEND_ACT: begin
                 sdrc_cmd <= 3'b011;
                 sdrc_addr <= 21'b100000;
@@ -251,91 +259,53 @@ always @(posedge clk_sdram or negedge sdram_pll_lock) begin
 end
 
 
-reg [31:0] haddr_reg;
-wire [31:0] hrdata_reg;
-reg hreadyin_reg;
-wire hreadyout_reg;
-wire [1:0] hresp_reg;
-reg hsel_reg;
-reg [1:0] htrans_reg;
-reg [31:0] hwdata_reg;
-reg hwrite_reg;
-reg flash_ck;
-reg flash_cs_n;
-reg flash_hold_n;
-reg flash_wp_n;
-reg flash_do;
-reg flash_di;
+// SPI Flash 自检结果。测试流程独立放在 spi_flash_test.v 中，便于阅读和复用。
+wire        flash_test_busy;
+wire        flash_test_done;
+wire        flash_test_pass;
+wire        flash_test_fail;
+wire [7:0]  flash_test_fail_code;
+wire [23:0] flash_jedec_id;
+wire [31:0] flash_readback_data;
 
-SPI_Flash_Interface_Lite_Top u_flash(
-    .I_hclk             (clk_sdram),        // 输入：AHB 总线时钟
-    .I_hresetn          (sdram_pll_lock),   // 输入：AHB 总线低电平有效复位
-    .I_haddr_reg        (haddr_reg),        // 输入：[31:0] AHB 寄存器地址
-    .O_hrdata_reg       (hrdata_reg),       // 输出：[31:0] AHB 寄存器读数据
-    .I_hreadyin_reg     (hreadyin_reg),     // 输入：AHB 主设备就绪信号
-    .O_hreadyout_reg    (hreadyout_reg),    // 输出：AHB 从设备就绪信号
-    .O_hresp_reg        (hresp_reg),        // 输出：[1:0] AHB 传输响应
-    .I_hsel_reg         (hsel_reg),         // 输入：AHB 从设备选择信号 // 0补选中ip
-    .I_htrans_reg       (htrans_reg),       // 输入：[1:0] AHB 传输类型
-    .I_hwdata_reg       (hwdata_reg),       // 输入：[31:0] AHB 写数据
-    .I_hwrite_reg       (hwrite_reg),       // 输入：AHB 读写控制，1 为写，0 为读
-    .O_flash_ck         (flash_ck),         // 输出：SPI Flash 时钟
-    .O_flash_cs_n       (flash_cs_n),       // 输出：SPI Flash 片选，低电平有效
-    .IO_flash_hold_n    (flash_hold_n),     // 双向：SPI Flash 保持信号
-    .IO_flash_wp_n      (flash_wp_n),       // 双向：SPI Flash 写保护信号
-    .IO_flash_do        (flash_do),         // 双向：SPI Flash DO/MISO 数据线
-    .IO_flash_di        (flash_di)          // 双向：SPI Flash DI/MOSI 数据线
+spi_flash_test #(
+    .CLK_HZ    (108_000_000),
+    .TEST_ADDR (24'h7F0000), // 每轮测试会擦除此地址所在的 4KB，请先确认该扇区空闲
+    .TEST_DATA (32'h12345678)
+) u_spi_flash_test (
+    .clk              (clk_sdram),
+    .rst_n            (sdram_pll_lock),
+    .key_s1           (key_s1),
+    .flash_led_n      (io_voltage_led2),
+    .test_busy        (flash_test_busy),
+    .test_done        (flash_test_done),
+    .test_pass        (flash_test_pass),
+    .test_fail        (flash_test_fail),
+    .fail_code        (flash_test_fail_code),
+    .jedec_id         (flash_jedec_id),
+    .readback_data    (flash_readback_data),
+    .O_flash_ck       (O_flash_ck),
+    .O_flash_cs_n     (O_flash_cs_n),
+    .IO_flash_hold_n  (IO_flash_hold_n),
+    .IO_flash_wp_n    (IO_flash_wp_n),
+    .IO_flash_do      (IO_flash_do),
+    .IO_flash_di      (IO_flash_di)
 );
 
-localparam IDEL = 4'd0;
-localparam ADDR = 4'd1;
-localparam DATA = 4'd2;
-localparam WAIT = 4'd3;
-localparam DONE = 4'd4;
-
-reg [3:0] flash_state;
-
-always @(posedge clk_sdram or negedge sdram_pll_lock) begin
-    if (!sdram_pll_lock) begin
-        flash_state <= IDEL;
-        haddr_reg <= 32'd0;
-        hwdata_reg <= 32'd0;
-        hsel_reg <= 0;
-        htrans_reg  <= 2'b00;
-        hwrite_reg  <= 1'b0;
-        hreadyin_reg <= 1'b1;
-    end else begin
-        case (flash_state)
-            IDEL : begin
-                hsel_reg <= 0;
-                htrans_reg <= 2'b00;
-                flash_state <= ADDR;
-            end 
-            ADDR : begin
-                hsel_reg <= 1'b1;
-                haddr_reg <= 32'h2C;
-                htrans_reg <= 2'b10;
-                hwrite_reg <= 1'b1;
-                flash_state <= DATA;
-            end
-            DATA : begin
-                hwdata_reg <= 32'h12345678;
-                hwrite_reg <= 1'b1;
-                hsel_reg <= 1'b0;
-                htrans_reg <= 2'b00;
-                flash_state <= WAIT;
-            end
-            WAIT : begin
-                if (hreadyout_reg) begin
-                    flash_state <= DONE;
-                end
-            end
-            DONE : begin
-                hwrite_reg <= 1'b0;
-            end
-            default: flash_state <= IDEL;
-        endcase
-    end
-end
+// 自检完成后，经板载 BL616 的 USB-UART 通道输出 ID、读回值、期望值和结果。
+uart_hex_report #(
+    .CLK_HZ    (108_000_000),
+    .UART_BAUD (115_200)
+) u_uart_hex_report (
+    .clk             (clk_sdram),
+    .rst_n           (sdram_pll_lock),
+    .report_valid    (flash_test_done),
+    .report_pass     (flash_test_pass),
+    .fail_code       (flash_test_fail_code),
+    .jedec_id        (flash_jedec_id),
+    .readback_data   (flash_readback_data),
+    .expected_data   (32'h12345678),
+    .uart_tx         (uart_tx)
+);
 
 endmodule

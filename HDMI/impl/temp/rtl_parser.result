@@ -1,5 +1,91 @@
 [
  {
+  "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+  "InstLine" : 1,
+  "InstName" : "hdmi_top",
+  "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+  "ModuleLine" : 1,
+  "ModuleName" : "hdmi_top",
+  "SubInsts" : [
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 143,
+    "InstName" : "u_sdram",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/sdram_controller_hs/sdram_controller_hs.v",
+    "ModuleLine" : 9,
+    "ModuleName" : "SDRAM_Controller_HS_Top"
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 44,
+    "InstName" : "u_pll",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/TMDS_rPLL_371.25.v",
+    "ModuleLine" : 9,
+    "ModuleName" : "TMDS_rPLL"
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 64,
+    "InstName" : "u_video_timing_720p60",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/video_timing_720p30.v",
+    "ModuleLine" : 1,
+    "ModuleName" : "video_timing_720p60"
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 94,
+    "InstName" : "u_dvi_tx_top",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/dvi_tx.v",
+    "ModuleLine" : 1072,
+    "ModuleName" : "DVI_TX_Top",
+    "SubInsts" : [
+     {
+      "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/dvi_tx.v",
+      "InstLine" : 1103,
+      "InstName" : "rgb2dvi_inst",
+      "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/dvi_tx.v",
+      "ModuleLine" : 10,
+      "ModuleName" : "~rgb2dvi.DVI_TX_Top"
+     }
+    ]
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 117,
+    "InstName" : "u_rPLL_108MHz",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/rPLL_108MHz.v",
+    "ModuleLine" : 10,
+    "ModuleName" : "rPLL_108MHz"
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 275,
+    "InstName" : "u_spi_flash_test",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/spi_flash_test.v",
+    "ModuleLine" : 23,
+    "ModuleName" : "spi_flash_test",
+    "SubInsts" : [
+     {
+      "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/spi_flash_test.v",
+      "InstLine" : 126,
+      "InstName" : "u_spi_flash_ip",
+      "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/spi_flash_interface_lite/spi_flash_interface_lite.v",
+      "ModuleLine" : 9,
+      "ModuleName" : "SPI_Flash_Interface_Lite_Top"
+     }
+    ]
+   },
+   {
+    "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/hdmi_top.v",
+    "InstLine" : 299,
+    "InstName" : "u_uart_hex_report",
+    "ModuleFile" : "G:/ccsugp/TangNano20k/HDMI/src/uart_hex_report.v",
+    "ModuleLine" : 19,
+    "ModuleName" : "uart_hex_report"
+   }
+  ]
+ },
+ {
   "InstFile" : "G:/ccsugp/TangNano20k/HDMI/src/tmds_encoder.v",
   "InstLine" : 1,
   "InstName" : "tmds_encoder",

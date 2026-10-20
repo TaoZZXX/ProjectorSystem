@@ -15,6 +15,11 @@ IO_LOC "io_voltage_led0" 15;
 IO_PORT "io_voltage_led0" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
 IO_LOC "io_voltage_led1" 16;
 IO_PORT "io_voltage_led1" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "io_voltage_led2" 17;
+IO_PORT "io_voltage_led2" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+// 板载 BL616 的 UART_RX 接收 FPGA 发出的调试串口数据。
+IO_LOC "uart_tx" 69;
+IO_PORT "uart_tx" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
 IO_LOC "dvi_txc_p" 33,34;
 IO_PORT "dvi_txc_p" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
 IO_LOC "dvi_tx2_p" 39,40;
@@ -23,3 +28,16 @@ IO_LOC "dvi_tx1_p" 37,38;
 IO_PORT "dvi_tx1_p" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
 IO_LOC "dvi_tx0_p" 35,36;
 IO_PORT "dvi_tx0_p" IO_TYPE=LVDS25 PULL_MODE=NONE DRIVE=3.5 BANK_VCCIO=3.3;
+// Tang Nano 20K 板载 64Mbit Flash 与 FPGA 的 MSPI 管脚相连；这些管脚所在 Bank 为 3.3V。
+IO_LOC "O_flash_ck" 59;
+IO_PORT "O_flash_ck" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC "O_flash_cs_n" 60;
+IO_PORT "O_flash_cs_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "IO_flash_di" 61;
+IO_PORT "IO_flash_di" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC "IO_flash_do" 62;
+IO_PORT "IO_flash_do" IO_TYPE=LVCMOS33 PULL_MODE=NONE;
+IO_LOC "IO_flash_hold_n" 54;
+IO_PORT "IO_flash_hold_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC "IO_flash_wp_n" 57;
+IO_PORT "IO_flash_wp_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
